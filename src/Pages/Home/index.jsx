@@ -12,6 +12,7 @@ import './style.css'
 // COMPONENT
 import Navbar from '../../Component/Navbar'
 import Loader from '../../Component/Loader'
+import Filter from './Filter'
 
 function Home () {
 
@@ -19,12 +20,19 @@ function Home () {
     const [num,setNum] = useState(12)
     const [dataPokemon,setDataPokemon] = useState([])
 
+    // FILTER STATE
+    const [dataBackUp,setDataBackUp] = useState([])
+    const [listType,setListTypes] = useState(['all'])
+    const [selectedFilter,setSeletedFilter] = useState(null)
+    const [isFilter,setIsFilter] = useState(false)
+
     // QUERY
     const QUERY = gql`
     query {
         pokemons(first:${num}) {
           name
           image
+          types
         }
     }
     `
@@ -63,15 +71,53 @@ function Home () {
     }
 
     useEffect(()=>{
-        if (data) {
+        if (data && !isFilter) {
+            let arr = ['all']
+            data.pokemons.forEach(e=>{
+                e.types.forEach(e2=>{
+                    if (!arr.includes(e2)) {
+                        arr.push(e2)
+                    }
+                })
+            })
+            setListTypes(arr)
             setDataPokemon(data.pokemons)
+            setDataBackUp(data.pokemons)
         }
-    },[data])
+    },[data,isFilter])
+
+    useEffect(()=>{
+
+        if (selectedFilter) {
+            if (selectedFilter !== 'all') {
+                let result = []
+                let tempArr = [...dataBackUp]
+                tempArr.forEach(e=>{
+                    e.types.forEach(e2=>{
+                        if (e2 === selectedFilter) {
+                            result.push(e)
+                        }
+                    })
+                })
+
+                setDataPokemon(result)
+            }else {
+                setIsFilter(false)
+            }
+        }
+
+    },[selectedFilter,dataBackUp])
 
     return (
         <div className="home-container">            
             
             <Navbar/>
+            <Filter
+                listType={listType}
+                selectedFilter={selectedFilter}
+                setSeletedFilter={setSeletedFilter}
+                setIsFilter={setIsFilter}
+            />
             <InfiniteScroll
                 initialLoad={false}
                 loadMore={addNum}
