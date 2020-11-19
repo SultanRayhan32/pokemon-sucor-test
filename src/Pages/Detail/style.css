@@ -107,3 +107,33 @@
     color: white;
     background-color: #E85849;
 }
+
+
+@media only screen and (max-width: 600px) {
+
+    .image-content {
+        height: 300px;
+    }
+
+
+    .detail-container {
+        flex-direction: column;
+        justify-content: flex-start;
+        margin-top: 90px;
+    }
+
+    .left-content {
+        width: 100%;
+    }
+    .right-content {
+        width: 100%;
+    }
+
+    .content-evo-item {
+        height: 100px;
+    }
+
+
+    
+
+}
